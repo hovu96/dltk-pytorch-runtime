@@ -17,13 +17,5 @@ def apply():
     })
 
 
-@app.route('/program', methods=['GET'])
-def program():
-    logging.info("apply")
-    return json.dumps({
-        "a": "b",
-    })
-
-
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, port=5002, host='0.0.0.0')
