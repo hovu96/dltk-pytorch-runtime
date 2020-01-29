@@ -1,0 +1,24 @@
+apiVersion: "kubeflow.org/v1"
+kind: "PyTorchJob"
+metadata:
+  name: "smoke-dist"
+spec:
+  pytorchReplicaSpecs:
+    Master:
+      replicas: 1
+      restartPolicy: OnFailure
+      template:
+        spec:
+          containers:
+            - name: pytorch
+              image: hovu96/pytorch-dist-sendrecv-test:1.0
+              args: ["--backend", "gloo"]
+    Worker:
+      replicas: 3
+      restartPolicy: OnFailure
+      template:
+        spec:
+          containers:
+            - name: pytorch
+              image: hovu96/pytorch-dist-sendrecv-test:1.0
+              args: ["--backend", "gloo"]
