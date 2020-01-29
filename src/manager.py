@@ -1,12 +1,27 @@
 import logging
 import json
+import subprocess
+import sys
+import threading
 from flask import Flask, request
 app = Flask(__name__)
+
+
+lock = threading.Lock()
+algorithm_process = None
 
 
 @app.route('/algorithm', methods=['PUT'])
 def program():
     logging.info("algorithm")
+    lock.acquire()
+    try:
+        global algorithm_process
+        if algorithm_process:
+            algorithm_process.terminate()
+        algorithm_process = subprocess.Popen([sys.executable, 'algorithm.py'])
+    finally:
+        lock.release()
 
 
 @app.route('/model/<name>', methods=['PUT', 'DELETE'])
