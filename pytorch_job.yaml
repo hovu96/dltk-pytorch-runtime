@@ -1,0 +1,40 @@
+apiVersion: "kubeflow.org/v1"
+kind: "PyTorchJob"
+metadata:
+  name: "test"
+spec:
+  pytorchReplicaSpecs:
+    Master:
+      replicas: 1
+      restartPolicy: OnFailure
+      template:
+        spec:
+          containers:
+            - name: pytorch
+              image: hovu96/dltk-pytorch-runtime:latest
+              args: ["--backend", "gloo"]
+              ports:
+                - containerPort: 5001
+                  name: manager
+                  protocol: TCP
+                - containerPort: 5002
+                  name: algorithm
+                  protocol: TCP
+              imagePullPolicy: Always
+    Worker:
+      replicas: 3
+      restartPolicy: OnFailure
+      template:
+        spec:
+          containers:
+            - name: pytorch
+              image: hovu96/dltk-pytorch-runtime:latest
+              args: ["--backend", "gloo"]
+              ports:
+                - containerPort: 5001
+                  name: manager
+                  protocol: TCP
+                - containerPort: 5002
+                  name: algorithm
+                  protocol: TCP
+              imagePullPolicy: Always

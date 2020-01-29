@@ -4,6 +4,6 @@ RUN mkdir -p $INSTALL_PATH
 WORKDIR $INSTALL_PATH
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-COPY src/ .
+COPY src/ ./
 EXPOSE 5001 5002 23456
-ENTRYPOINT ["python", "$INSTALL_PATH/admin.py"]
+CMD ["python", "./manager.py"]
