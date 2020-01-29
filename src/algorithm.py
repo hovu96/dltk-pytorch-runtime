@@ -1,5 +1,7 @@
 import logging
 import json
+import os
+from waitress import serve
 from flask import Flask
 app = Flask(__name__)
 
@@ -18,4 +20,5 @@ def apply():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5002, host='0.0.0.0')
+    logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+    serve(app, host="0.0.0.0", port=5002)

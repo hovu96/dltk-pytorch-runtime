@@ -3,6 +3,8 @@ import json
 import subprocess
 import sys
 import threading
+import os
+from waitress import serve
 from flask import Flask, request
 app = Flask(__name__)
 
@@ -13,15 +15,18 @@ algorithm_process = None
 
 @app.route('/algorithm', methods=['PUT'])
 def program():
-    logging.info("algorithm")
+    logging.info("received new algorithm")
     lock.acquire()
     try:
         global algorithm_process
         if algorithm_process:
+            logging.info("terminating current algorithm")
             algorithm_process.terminate()
+        logging.info("starting new algorithm")
         algorithm_process = subprocess.Popen([sys.executable, 'algorithm.py'])
     finally:
         lock.release()
+    return json.dumps({})
 
 
 @app.route('/model/<name>', methods=['PUT', 'DELETE'])
@@ -33,4 +38,5 @@ def model(name):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001, host='0.0.0.0')
+    logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+    serve(app, host="0.0.0.0", port=5001)
