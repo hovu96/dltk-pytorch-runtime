@@ -38,8 +38,10 @@ def list_models():
 def model(name):
     if request.method == 'POST':
         logging.info("add model %s" % name)
+        return jsonify({})
     if request.method == 'DELETE':
         logging.info("remove model %s" % name)
+        return jsonify({})
 
 
 if __name__ == '__main__':
