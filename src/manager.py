@@ -36,7 +36,7 @@ def list_models():
 
 @app.route('/model/<name>', methods=['PUT', 'DELETE'])
 def model(name):
-    if request.method == 'POST':
+    if request.method == 'PUT':
         logging.info("add model %s" % name)
         return jsonify({})
     if request.method == 'DELETE':
