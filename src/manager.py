@@ -5,9 +5,9 @@ import sys
 import threading
 import os
 from waitress import serve
-from flask import Flask, request
-app = Flask(__name__)
+from flask import Flask, request, jsonify
 
+app = Flask(__name__)
 
 lock = threading.Lock()
 algorithm_process = None
@@ -27,6 +27,11 @@ def program():
     finally:
         lock.release()
     return json.dumps({})
+
+
+@app.route('/models', methods=['GET'])
+def list_models(name):
+    return jsonify(["a", "b"])
 
 
 @app.route('/model/<name>', methods=['PUT', 'DELETE'])
