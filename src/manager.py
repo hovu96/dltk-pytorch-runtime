@@ -30,7 +30,7 @@ def program():
 
 
 @app.route('/models', methods=['GET'])
-def list_models(name):
+def list_models():
     return jsonify(["a", "b"])
 
 
