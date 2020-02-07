@@ -2,19 +2,22 @@ import logging
 import json
 import os
 from waitress import serve
-from flask import Flask
+from flask import Flask, jsonify
 app = Flask(__name__)
 
 
 @app.route('/fit', methods=['POST'])
 def fit():
     logging.info("fit")
+    return jsonify({
+        "a": "b",
+    })
 
 
 @app.route('/apply', methods=['GET'])
 def apply():
     logging.info("apply")
-    return json.dumps({
+    return jsonify({
         "a": "b",
     })
 
