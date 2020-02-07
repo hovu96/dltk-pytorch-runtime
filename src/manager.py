@@ -16,9 +16,7 @@ algorithm_process = None
 models_path = "/models"
 
 
-@app.route('/algorithm', methods=['PUT'])
-def program():
-    logging.info("received new algorithm")
+def restart_algorithm():
     lock.acquire()
     try:
         global algorithm_process
@@ -27,9 +25,19 @@ def program():
             algorithm_process.terminate()
         logging.info("starting new algorithm")
         algorithm_process = subprocess.Popen([sys.executable, 'algorithm.py'])
+        return {}
     finally:
         lock.release()
-    return json.dumps({})
+
+
+restart_algorithm()
+
+
+@app.route('/algorithm', methods=['PUT'])
+def program():
+    logging.info("received new algorithm")
+    a = restart_algorithm()
+    return json.dumps(a)
 
 
 @app.route('/models', methods=['GET'])
