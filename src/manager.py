@@ -4,6 +4,7 @@ import subprocess
 import sys
 import threading
 import os
+import shutil
 from waitress import serve
 from flask import Flask, request, jsonify
 
@@ -11,6 +12,8 @@ app = Flask(__name__)
 
 lock = threading.Lock()
 algorithm_process = None
+
+models_path = "/models"
 
 
 @app.route('/algorithm', methods=['PUT'])
@@ -31,16 +34,25 @@ def program():
 
 @app.route('/models', methods=['GET'])
 def list_models():
-    return jsonify(["a", "b"])
+    model_names = []
+    for model_name in os.listdir(models_path):
+        full_path = os.path.join(models_path, model_name)
+        if os.path.isdir(full_path):
+            model_names.append(model_name)
+    return jsonify(model_names)
 
 
-@app.route('/model/<name>', methods=['PUT', 'DELETE'])
-def model(name):
+@app.route('/model/<model_name>', methods=['PUT', 'DELETE'])
+def model(model_name):
     if request.method == 'PUT':
-        logging.info("add model %s" % name)
+        logging.info("creating model %s ..." % model_name)
+        full_path = os.path.join(models_path, model_name)
+        os.mkdir(full_path)
         return jsonify({})
     if request.method == 'DELETE':
-        logging.info("remove model %s" % name)
+        logging.info("removing model %s ..." % model_name)
+        full_path = os.path.join(models_path, model_name)
+        shutil.rmtree(full_path)
         return jsonify({})
 
 
