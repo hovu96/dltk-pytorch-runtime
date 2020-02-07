@@ -10,7 +10,7 @@ app = Flask(__name__)
 def fit():
     logging.info("fit")
     return jsonify({
-        "a": "b",
+        "dltk-pytorch-runtime-method": "fit",
     })
 
 
@@ -18,7 +18,7 @@ def fit():
 def apply():
     logging.info("apply")
     return jsonify({
-        "a": "b",
+        "dltk-pytorch-runtime-method": "apply",
     })
 
 
