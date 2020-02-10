@@ -44,6 +44,8 @@ def program():
 def list_models():
     model_names = []
     for model_name in os.listdir(models_path):
+        if model_name == "lost+found":
+            continue
         full_path = os.path.join(models_path, model_name)
         if os.path.isdir(full_path):
             model_names.append(model_name)
