@@ -34,5 +34,6 @@ if __name__ == "__main__":
         # base_url='/jupyterlab/',
         # debug=False,
         token="",
-        # password=os.environ.get('HASHED_PWD')
+        # password=os.environ.get('HASHED_PWD'),
+        ip="0.0.0.0",
     )
