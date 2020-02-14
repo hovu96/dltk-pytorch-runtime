@@ -5,5 +5,5 @@ WORKDIR $INSTALL_PATH
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY src/ ./
-EXPOSE 80
+EXPOSE 8888
 ENTRYPOINT ["python", "./app.py"]
