@@ -28,9 +28,9 @@ if __name__ == "__main__":
     PytorchApp.launch_instance(
         port=os.getenv('PORT', 8888),
         open_browser=False,
-        # notebook_dir="",
+        notebook_dir=os.getenv('NOTEBOOK_PATH', "/notebooks"),
         allow_root=True,
-        default_url="/",
+        default_url="/tree",
         # base_url='/jupyterlab/',
         # debug=False,
         token="",
