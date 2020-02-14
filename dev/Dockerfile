@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 COPY src/ ./
 EXPOSE 8888
 WORKDIR $NOTEBOOK_PATH
-ENTRYPOINT ["python", "$INSTALL_PATH/app.py"]
+ENTRYPOINT python $INSTALL_PATH/app.py
