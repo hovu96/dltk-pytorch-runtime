@@ -21,6 +21,9 @@ class ApplyHandler(tornado.web.RequestHandler):
 
 
 class NotebookHandler(tornado.web.RequestHandler):
+    def check_xsrf_cookie(self):
+        pass
+
     def get(self):
         try:
             with open(notebook_file, 'r') as f:
