@@ -54,4 +54,5 @@ if __name__ == "__main__":
         token="",
         # password=os.environ.get('HASHED_PWD'),
         ip="0.0.0.0",
+        disable_check_xsrf=True,
     )
