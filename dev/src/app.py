@@ -33,7 +33,7 @@ class NotebookHandler(tornado.web.RequestHandler):
             self.set_status(404)
 
     def put(self):
-        source = self.request.body
+        source = self.request.body.decode()
         with open(notebook_file, "w") as f:
             f.write(source)
 
