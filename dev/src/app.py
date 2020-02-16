@@ -22,9 +22,12 @@ class ApplyHandler(tornado.web.RequestHandler):
 
 class NotebookHandler(tornado.web.RequestHandler):
     def get(self):
-        with open(notebook_file, 'r') as f:
-            source = f.read()
-        self.write(source)
+        try:
+            with open(notebook_file, 'r') as f:
+                source = f.read()
+            self.write(source)
+        except FileNotFoundError:
+            self.set_status(404)
 
     def put(self):
         source = self.request.body
