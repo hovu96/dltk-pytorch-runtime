@@ -28,6 +28,7 @@ class NotebookHandler(tornado.web.RequestHandler):
         try:
             with open(notebook_file, 'r') as f:
                 source = f.read()
+            self.set_header('X-Notebook-Version', '10')
             self.write(source)
         except FileNotFoundError:
             self.set_status(404)
