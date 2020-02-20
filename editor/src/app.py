@@ -6,8 +6,10 @@ import os
 
 
 notebook_name = "Algo.ipynb"
+notebook_version_name = "Algo.version"
 notebook_dir = os.getenv('NOTEBOOK_PATH', "/notebooks")
 notebook_file = os.path.join(notebook_dir, notebook_name)
+notebook_version_file = os.path.join(notebook_dir, notebook_version_name)
 
 
 class FitHandler(tornado.web.RequestHandler):
@@ -28,10 +30,18 @@ class NotebookHandler(tornado.web.RequestHandler):
         try:
             with open(notebook_file, 'r') as f:
                 source = f.read()
-            self.set_header('X-Notebook-Version', '10')
-            self.write(source)
         except FileNotFoundError:
+            source = None
+        try:
+            with open(notebook_version_file, 'r') as f:
+                version = f.read()
+        except FileNotFoundError:
+            version = 0
+        if source is None:
             self.set_status(404)
+            return
+        self.set_header('X-Notebook-Version', version)
+        self.write(source)
 
     def put(self):
         source = self.request.body.decode()
