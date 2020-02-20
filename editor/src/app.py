@@ -1,6 +1,8 @@
+from notebook.services.contents.largefilemanager import LargeFileManager
 import jupyterlab_server
 import tornado.web
 import os
+import logging
 
 # parameters: #https://github.com/jupyter/notebook/blob/master/notebook/notebookapp.py
 
@@ -8,7 +10,7 @@ import os
 notebook_name = "Algo.ipynb"
 notebook_version_name = "Algo.version"
 notebook_dir = os.getenv('NOTEBOOK_PATH', "/notebooks")
-notebook_file = os.path.join(notebook_dir, notebook_name)
+notebook_file_path = os.path.join(notebook_dir, notebook_name)
 notebook_version_file = os.path.join(notebook_dir, notebook_version_name)
 
 
@@ -28,7 +30,7 @@ class NotebookHandler(tornado.web.RequestHandler):
 
     def get(self):
         try:
-            with open(notebook_file, 'r') as f:
+            with open(notebook_file_path, 'r') as f:
                 source = f.read()
         except FileNotFoundError:
             source = None
@@ -46,10 +48,52 @@ class NotebookHandler(tornado.web.RequestHandler):
     def put(self):
         version = self.request.headers['X-Notebook-Version']
         source = self.request.body.decode()
-        with open(notebook_file, "w") as f:
+        with open(notebook_file_path, "w") as f:
             f.write(source)
         with open(notebook_version_file, "w") as f:
             f.write(version)
+
+
+class PytorchFileManager(LargeFileManager):
+    def save(self, model, path):
+        absolute_path = os.path.join(notebook_dir, path.strip("/"))
+        is_algo = absolute_path == notebook_file_path
+        if is_algo:
+            if os.path.exists(absolute_path):
+                with open(notebook_file_path, 'r') as f:
+                    old_algo_source = f.read()
+            else:
+                old_algo_source = ""
+        result = super().save(model, path)
+        if is_algo:
+            with open(notebook_file_path, 'r') as f:
+                new_algo_source = f.read()
+            if new_algo_source != old_algo_source:
+                try:
+                    with open(notebook_version_file, 'r') as f:
+                        version = int(f.read())
+                except FileNotFoundError:
+                    version = 0
+                version += 1
+                print("increased source code version number to %s" % version)
+                with open(notebook_version_file, "w") as f:
+                    f.write("%s" % version)
+        """
+        https://jupyter-notebook.readthedocs.io/en/stable/extending/savehooks.html
+        if model['type'] != 'notebook':
+            return
+        # only run on nbformat v4
+        if model['content']['nbformat'] != 4:
+            return
+
+        for cell in model['content']['cells']:
+            if cell['cell_type'] != 'code':
+                continue
+            cell['outputs'] = []
+            cell['execution_count'] = None        
+        """
+        #print("after save")
+        return result
 
 
 class PytorchApp(jupyterlab_server.LabServerApp):
@@ -62,11 +106,15 @@ class PytorchApp(jupyterlab_server.LabServerApp):
         super().start()
 
 
+def save_hook(os_path, model, contents_manager):
+    print("test")
+
+
 if __name__ == "__main__":
     PytorchApp.launch_instance(
         port=os.getenv('PORT', 8888),
         open_browser=False,
-        notebook_dir=notebook_dir,
+        root_dir=notebook_dir,
         allow_root=True,
         default_url="/notebooks/%s" % notebook_name,
         # base_url='/jupyterlab/',
@@ -75,4 +123,5 @@ if __name__ == "__main__":
         # password=os.environ.get('HASHED_PWD'),
         ip="0.0.0.0",
         disable_check_xsrf=True,
+        contents_manager_class=PytorchFileManager
     )
