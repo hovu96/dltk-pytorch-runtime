@@ -6,7 +6,8 @@ import threading
 import os
 import shutil
 from waitress import serve
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
+import http
 
 app = Flask(__name__)
 
@@ -14,6 +15,9 @@ lock = threading.Lock()
 algorithm_process = None
 
 models_path = "/models"
+code_dir = "/code"
+code_module_path = os.path.join(code_dir, "code.py")
+code_version_path = os.path.join(code_dir, "code.version")
 
 
 def restart_algorithm():
@@ -30,14 +34,34 @@ def restart_algorithm():
         lock.release()
 
 
-restart_algorithm()
-
-
-@app.route('/code', methods=['PUT'])
+@app.route('/code', methods=['GET', 'PUT'])
 def program():
-    logging.info("received new algorithm code")
-    a = restart_algorithm()
-    return json.dumps(a)
+    if request.method == 'PUT':
+        logging.info("received new algorithm code")
+        version = request.headers['X-Notebook-Version']
+        code = request.data.decode()
+        with open(code_module_path, "w") as f:
+            f.write(code)
+        with open(code_version_path, "w") as f:
+            f.write(version)
+        a = restart_algorithm()
+        return json.dumps(a)
+    if request.method == 'GET':
+        try:
+            with open(code_module_path, 'r') as f:
+                code = f.read()
+        except FileNotFoundError:
+            code = None
+        try:
+            with open(code_version_path, 'r') as f:
+                version = f.read()
+        except FileNotFoundError:
+            version = 0
+        if code is None:
+            return '', http.HTTPStatus.NOT_FOUND
+        response = Response(code)
+        response.headers['X-Notebook-Version'] = "%s" % version
+        return response
 
 
 @app.route('/models', methods=['GET'])
