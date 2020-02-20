@@ -106,6 +106,7 @@ class PytorchFileManager(LargeFileManager):
                     data=deployment_code.encode(),
                     method="PUT",
                     headers={
+                        "Content-Type": "text/plain",
                         "X-Code-Version": version,
                     }
                 )
