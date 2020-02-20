@@ -106,7 +106,7 @@ class PytorchFileManager(LargeFileManager):
                     data=deployment_code.encode(),
                     method="PUT",
                     headers={
-                        "X-Algorithm-Version": version,
+                        "X-Code-Version": version,
                     }
                 )
                 urllib.request.urlopen(upload_request)

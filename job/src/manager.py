@@ -41,7 +41,7 @@ def restart_algorithm():
 def program():
     if request.method == 'PUT':
         logging.info("received new algorithm code")
-        version = request.headers['X-Notebook-Version']
+        version = request.headers['X-Code-Version']
         code = request.data.decode()
         with open(code_module_path, "w") as f:
             f.write(code)
@@ -63,7 +63,7 @@ def program():
         if code is None:
             return '', http.HTTPStatus.NOT_FOUND
         response = Response(code)
-        response.headers['X-Notebook-Version'] = "%s" % version
+        response.headers['X-Code-Version'] = "%s" % version
         return response
 
 
