@@ -44,9 +44,12 @@ class NotebookHandler(tornado.web.RequestHandler):
         self.write(source)
 
     def put(self):
+        version = self.request.headers['X-Notebook-Version']
         source = self.request.body.decode()
         with open(notebook_file, "w") as f:
             f.write(source)
+        with open(notebook_version_file, "w") as f:
+            f.write(version)
 
 
 class PytorchApp(jupyterlab_server.LabServerApp):
