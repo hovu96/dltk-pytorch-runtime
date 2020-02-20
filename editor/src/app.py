@@ -3,6 +3,7 @@ import jupyterlab_server
 import tornado.web
 import os
 import logging
+import urllib
 
 # parameters: #https://github.com/jupyter/notebook/blob/master/notebook/notebookapp.py
 
@@ -12,6 +13,8 @@ notebook_version_name = "Algo.version"
 notebook_dir = os.getenv('NOTEBOOK_PATH', "/notebooks")
 notebook_file_path = os.path.join(notebook_dir, notebook_name)
 notebook_version_file = os.path.join(notebook_dir, notebook_version_name)
+
+master_url = os.getenv("MASTER_URL", "")
 
 
 class FitHandler(tornado.web.RequestHandler):
@@ -54,6 +57,24 @@ class NotebookHandler(tornado.web.RequestHandler):
             f.write(version)
 
 
+def generate_deployment_code(model):
+    """
+    https://jupyter-notebook.readthedocs.io/en/stable/extending/savehooks.html
+    if model['type'] != 'notebook':
+        return
+    # only run on nbformat v4
+    if model['content']['nbformat'] != 4:
+        return
+
+    for cell in model['content']['cells']:
+        if cell['cell_type'] != 'code':
+            continue
+        cell['outputs'] = []
+        cell['execution_count'] = None
+    """
+    return "print('hello');"
+
+
 class PytorchFileManager(LargeFileManager):
     def save(self, model, path):
         absolute_path = os.path.join(notebook_dir, path.strip("/"))
@@ -75,24 +96,21 @@ class PytorchFileManager(LargeFileManager):
                 except FileNotFoundError:
                     version = 0
                 version += 1
-                print("increased source code version number to %s" % version)
                 with open(notebook_version_file, "w") as f:
                     f.write("%s" % version)
-        """
-        https://jupyter-notebook.readthedocs.io/en/stable/extending/savehooks.html
-        if model['type'] != 'notebook':
-            return
-        # only run on nbformat v4
-        if model['content']['nbformat'] != 4:
-            return
-
-        for cell in model['content']['cells']:
-            if cell['cell_type'] != 'code':
-                continue
-            cell['outputs'] = []
-            cell['execution_count'] = None        
-        """
-        #print("after save")
+                print("increased source code version number to %s" % version)
+                deployment_code = generate_deployment_code(model)
+                master_code_url = urllib.parse.urljoin(master_url, "code")
+                upload_request = urllib.request.Request(
+                    master_code_url,
+                    data=deployment_code.encode(),
+                    method="PUT",
+                    headers={
+                        "X-Algorithm-Version": version,
+                    }
+                )
+                urllib.request.urlopen(upload_request)
+                print("sent algorithm code to master (version %s)" % version)
         return result
 
 

@@ -33,9 +33,9 @@ def restart_algorithm():
 restart_algorithm()
 
 
-@app.route('/algorithm', methods=['PUT'])
+@app.route('/code', methods=['PUT'])
 def program():
-    logging.info("received new algorithm")
+    logging.info("received new algorithm code")
     a = restart_algorithm()
     return json.dumps(a)
 
