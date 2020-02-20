@@ -124,10 +124,6 @@ class PytorchApp(jupyterlab_server.LabServerApp):
         super().start()
 
 
-def save_hook(os_path, model, contents_manager):
-    print("test")
-
-
 if __name__ == "__main__":
     PytorchApp.launch_instance(
         port=os.getenv('PORT', 8888),

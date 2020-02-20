@@ -8,6 +8,7 @@ import shutil
 from waitress import serve
 from flask import Flask, request, jsonify, Response
 import http
+import pathlib
 
 app = Flask(__name__)
 
@@ -18,6 +19,8 @@ models_path = "/models"
 code_dir = "/code"
 code_module_path = os.path.join(code_dir, "code.py")
 code_version_path = os.path.join(code_dir, "code.version")
+
+pathlib.Path(code_dir).mkdir(parents=True, exist_ok=True)
 
 
 def restart_algorithm():
