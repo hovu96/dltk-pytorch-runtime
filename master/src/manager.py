@@ -5,12 +5,16 @@ import sys
 import threading
 import os
 import shutil
-from waitress import serve
+#from waitress import serve
 from flask import Flask, request, jsonify, Response
+from flask_socketio import SocketIO
 import http
 import pathlib
 
 app = Flask(__name__)
+app.config['SECRET_KEY']='secret!'
+
+socketio = SocketIO(app)
 
 lock = threading.Lock()
 algorithm_process = None
@@ -47,6 +51,7 @@ def program():
             f.write(code)
         with open(code_version_path, "w") as f:
             f.write(version)
+        socketio.emit("code")
         a = restart_algorithm()
         return json.dumps(a)
     if request.method == 'GET':
@@ -85,6 +90,7 @@ def model(model_name):
         logging.info("creating model %s ..." % model_name)
         full_path = os.path.join(models_path, model_name)
         os.mkdir(full_path)
+        socketio.emit("model")
         return jsonify({})
     if request.method == 'DELETE':
         logging.info("removing model %s ..." % model_name)
@@ -95,4 +101,5 @@ def model(model_name):
 
 if __name__ == '__main__':
     logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
-    serve(app, host="0.0.0.0", port=5001)
+    #serve(app, host="0.0.0.0", port=5001)
+    socketio.run(app, host="0.0.0.0", port=5001)
