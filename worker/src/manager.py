@@ -23,7 +23,7 @@ algorithm_process = None
 models_path = "/models"
 code_dir = "/code"
 pathlib.Path(code_dir).mkdir(parents=True, exist_ok=True)
-code_module_path = os.path.join(code_dir, "code.py")
+code_module_path = os.path.join(code_dir, "dltk_code.py")
 
 
 def reload_code():

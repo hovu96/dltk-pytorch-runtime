@@ -7,4 +7,5 @@
         "--ignore=E402",
         "--max-line-length=200"
     ],
+    "python.pythonPath": "/usr/bin/python3",
 }

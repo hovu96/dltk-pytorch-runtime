@@ -5,7 +5,6 @@ import sys
 import threading
 import os
 import shutil
-#from waitress import serve
 from flask import Flask, request, jsonify, Response
 from flask_socketio import SocketIO
 import http
@@ -21,8 +20,8 @@ algorithm_process = None
 
 models_path = "/models"
 code_dir = "/code"
-code_module_path = os.path.join(code_dir, "code.py")
-code_version_path = os.path.join(code_dir, "code.version")
+code_module_path = os.path.join(code_dir, "dltk_code.py")
+code_version_path = os.path.join(code_dir, "dltk_code.version")
 
 pathlib.Path(code_dir).mkdir(parents=True, exist_ok=True)
 
