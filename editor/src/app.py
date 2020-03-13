@@ -58,21 +58,19 @@ class NotebookHandler(tornado.web.RequestHandler):
 
 
 def generate_deployment_code(model):
-    """
-    https://jupyter-notebook.readthedocs.io/en/stable/extending/savehooks.html
+    # https://jupyter-notebook.readthedocs.io/en/stable/extending/savehooks.html
     if model['type'] != 'notebook':
         return
     # only run on nbformat v4
     if model['content']['nbformat'] != 4:
         return
-
+    source = ""
     for cell in model['content']['cells']:
         if cell['cell_type'] != 'code':
             continue
-        cell['outputs'] = []
-        cell['execution_count'] = None
-    """
-    return "print('hello');"
+        cell_source = cell['source']
+        source += cell_source + "\r\n"
+    return source
 
 
 class PytorchFileManager(LargeFileManager):
