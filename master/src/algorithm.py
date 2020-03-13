@@ -30,7 +30,7 @@ def fit():
         #logging.info("worker_fit_result: %s" % worker_fit_result)
         worker_futures.append(f)
 
-    import dltk_code
+    dltk_code = __import__("dltk_code")
     result = dltk_code.fit(events)
 
     for f in worker_futures:

@@ -13,7 +13,7 @@ sys.path.insert(0, "/code")
 
 
 def inner_fit():
-    import dltk_code
+    dltk_code = __import__("dltk_code")
     result = dltk_code.fit([])
     rank = int(os.environ.get("RANK"))
     return "worker%s" % rank
