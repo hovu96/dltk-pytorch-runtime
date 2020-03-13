@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:1.0-cuda10.0-cudnn7-runtime
+FROM pytorch/pytorch:latest
 ENV INSTALL_PATH /src
 ENV NOTEBOOK_PATH /notebooks
 RUN mkdir -p $INSTALL_PATH
