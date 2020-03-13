@@ -12,11 +12,10 @@ import sys
 sys.path.insert(0, "/code")
 
 
-def inner_fit():
+def inner_fit(events):
     dltk_code = __import__("dltk_code")
-    result = dltk_code.fit([])
-    rank = int(os.environ.get("RANK"))
-    return "worker%s" % rank
+    results = dltk_code.fit(events)
+    return results
 
 
 @app.route('/fit', methods=['POST'])

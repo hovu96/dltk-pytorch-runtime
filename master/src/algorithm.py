@@ -13,7 +13,7 @@ sys.path.insert(0, "/code")
 world_size = int(os.environ.get("WORLD_SIZE"))
 
 
-def inner_fit():
+def inner_fit(events):
     return "master"
 
 
@@ -26,7 +26,7 @@ def fit():
     worker_futures = []
     for rank in range(1, world_size):
         worker_name = "Worker%s" % rank
-        f = rpc.rpc_async(worker_name, algorithm.inner_fit)
+        f = rpc.rpc_async(worker_name, algorithm.inner_fit, (events,))
         #logging.info("worker_fit_result: %s" % worker_fit_result)
         worker_futures.append(f)
 
@@ -34,7 +34,7 @@ def fit():
     result = dltk_code.fit(events)
 
     for f in worker_futures:
-        r = f.wait()
+        f.wait()
         # result.append(r)
 
     return jsonify(result)
