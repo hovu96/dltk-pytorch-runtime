@@ -50,8 +50,8 @@ def program():
             f.write(code)
         with open(code_version_path, "w") as f:
             f.write(version)
-        socketio.emit("code")
         a = restart_algorithm()
+        socketio.emit("code")
         return json.dumps(a)
     if request.method == 'GET':
         try:
