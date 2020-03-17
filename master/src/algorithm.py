@@ -19,27 +19,35 @@ def inner_fit(events):
 
 @app.route('/fit', methods=['POST'])
 def fit():
-    logging.info("fit")
+    logging.info("received /fit request")
     events = request.get_json()
 
     import algorithm
     worker_futures = []
     for rank in range(1, world_size):
         worker_name = "Worker%s" % rank
+        logging.info("calling fit on %s ... " % worker_name)
         f = rpc.rpc_async(worker_name, algorithm.inner_fit, (events,))
         #logging.info("worker_fit_result: %s" % worker_fit_result)
         worker_futures.append(f)
 
     dltk_code = __import__("dltk_code")
+
+    def merge_results(a, b):
+        return a + b
+    if hasattr(dltk_code, "merge_results"):
+        merge_results = getattr(dltk_code, "merge_results")
+
+    logging.info("calling for on Master ...")
     result = dltk_code.fit(events)
 
+    logging.info("merging worker's results ...")
     for f in worker_futures:
-        f.wait()
-        # result.append(r)
+        worker_result = f.wait()
+        result = merge_results(result, worker_result)
 
+    logging.info("fit done")
     return jsonify(result)
-
-    # await ...
 
 
 @app.route('/apply', methods=['GET'])

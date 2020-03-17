@@ -127,4 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-build.sh
+
+
+build_and_deploy.sh

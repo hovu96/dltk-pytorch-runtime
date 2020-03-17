@@ -13,14 +13,16 @@ sys.path.insert(0, "/code")
 
 
 def inner_fit(events):
+    logging.info("received inner_fit request")
     dltk_code = __import__("dltk_code")
     results = dltk_code.fit(events)
+    logging.info("inner_fit done")
     return results
 
 
 @app.route('/fit', methods=['POST'])
 def fit():
-    logging.info("fit")
+    logging.info("received /fit request")
     return jsonify({
         "dltk-pytorch-runtime-method": "fit",
     })
