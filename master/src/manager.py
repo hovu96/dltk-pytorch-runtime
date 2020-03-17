@@ -33,8 +33,9 @@ def restart_algorithm():
         if algorithm_process:
             logging.info("terminating current algorithm")
             algorithm_process.terminate()
-        logging.info("starting new algorithm")
+        logging.info("starting algorithm ...")
         algorithm_process = subprocess.Popen([sys.executable, 'algorithm.py'])
+        logging.info("algorithm started")
         return {}
     finally:
         lock.release()

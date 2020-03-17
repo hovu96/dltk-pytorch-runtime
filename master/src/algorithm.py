@@ -60,6 +60,7 @@ def apply():
 
 if __name__ == '__main__':
     logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+    logging.info("initing rpc ...")
     rpc.init_rpc(
         "Master",
         world_size=world_size,
