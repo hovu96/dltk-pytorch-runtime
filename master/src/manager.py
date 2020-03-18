@@ -11,7 +11,7 @@ import http
 import pathlib
 
 app = Flask(__name__)
-app.config['SECRET_KEY']='secret!'
+app.config['SECRET_KEY'] = 'secret!'
 
 socketio = SocketIO(app)
 
@@ -100,6 +100,9 @@ def model(model_name):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+    logging.basicConfig(
+        level=os.environ.get("LOGLEVEL", "INFO"),
+        format='%(asctime)s %(levelname)-8s %(message)s',
+    )
     #serve(app, host="0.0.0.0", port=5001)
     socketio.run(app, host="0.0.0.0", port=5001)

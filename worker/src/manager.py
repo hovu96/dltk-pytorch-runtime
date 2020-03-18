@@ -81,7 +81,10 @@ def disconnect():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+    logging.basicConfig(
+        level=os.environ.get("LOGLEVEL", "INFO"),
+        format='%(asctime)s %(levelname)-8s %(message)s',
+    )
 
     reload_code()
 

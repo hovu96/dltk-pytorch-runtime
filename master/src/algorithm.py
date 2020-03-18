@@ -26,7 +26,7 @@ def fit():
     worker_futures = []
     for rank in range(1, world_size):
         worker_name = "Worker%s" % rank
-        logging.info("calling fit on %s ... " % worker_name)
+        logging.info("calling algo.fit on %s ... " % worker_name)
         f = rpc.rpc_async(worker_name, algorithm.inner_fit, (events,))
         #logging.info("worker_fit_result: %s" % worker_fit_result)
         worker_futures.append(f)
@@ -38,7 +38,7 @@ def fit():
     if hasattr(dltk_code, "merge_results"):
         merge_results = getattr(dltk_code, "merge_results")
 
-    logging.info("calling for on Master ...")
+    logging.info("calling algo.fit on Master ...")
     result = dltk_code.fit(events)
 
     logging.info("merging worker's results ...")
@@ -59,7 +59,10 @@ def apply():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+    logging.basicConfig(
+        level=os.environ.get("LOGLEVEL", "INFO"),
+        format='%(asctime)s %(levelname)-8s %(message)s',
+    )
     logging.info("initing rpc ...")
     rpc.init_rpc(
         "Master",

@@ -37,9 +37,13 @@ def apply():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+    logging.basicConfig(
+        level=os.environ.get("LOGLEVEL", "INFO"),
+        format='%(asctime)s %(levelname)-8s %(message)s',
+    )
     # dist.init_process_group('gloo')
     rank = int(os.environ.get("RANK"))
+    logging.info("initing rpc ...")
     rpc.init_rpc(
         "Worker%s" % rank,
         world_size=int(os.environ.get("WORLD_SIZE")),
@@ -49,6 +53,7 @@ if __name__ == '__main__':
             rpc_timeout=datetime.timedelta(hours=1)
         )
     )
+    logging.info("rpc inited")
     serve(
         app,
         host="0.0.0.0",
